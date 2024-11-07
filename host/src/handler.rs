@@ -1,9 +1,9 @@
 use actix_web::{get, http::StatusCode, post, web, HttpResponse, Responder};
-use ethers;
 use clap::Parser;
+use ethers;
+use kalypso_helper::response::response;
 use methods::{GUEST_ELF, GUEST_ID};
 use risc0_zkvm::{default_prover, ExecutorEnv, ProverOpts};
-use kalypso_helper::response::response;
 // use serde_json::{Error, Value};
 // use std::sync::{Arc, Mutex};
 use serde::{Deserialize, Serialize};
@@ -27,7 +27,7 @@ async fn test() -> impl Responder {
 
 #[post("/generateProof")]
 async fn generate_proof(
-    payload: web::Json<kalypso_generator_models::models::InputPayload>
+    payload: web::Json<kalypso_generator_models::models::InputPayload>,
 ) -> impl Responder {
     log::info!("Request received by the risc0 prover");
 
@@ -51,10 +51,13 @@ async fn generate_proof(
 
     println!("{:?}", receipt);
 
-    // let seal = receipt.inner.groth16().unwrap().seal.clone(); 
-    
+    // let seal = receipt.inner.groth16().unwrap().seal.clone();
+
     // prefix 50bd1769 bytes to seal, og seal wont work on contracts
-    let seal_with_prefix: Vec<u8> = vec![0x50, 0xBD, 0x17, 0x69].into_iter().chain(receipt.inner.groth16().unwrap().seal.clone()).collect();
+    let seal_with_prefix: Vec<u8> = vec![0x50, 0xBD, 0x17, 0x69]
+        .into_iter()
+        .chain(receipt.inner.groth16().unwrap().seal.clone())
+        .collect();
     let guest = GUEST_ID.map(u32::to_le_bytes);
     let image_id = guest.as_flattened();
     let journal = receipt.journal.bytes;
@@ -65,17 +68,13 @@ async fn generate_proof(
         ethers::abi::Token::Bytes(journal),
     ];
     let encoded = ethers::abi::encode(&value);
-    return HttpResponse::Ok().json(
-        kalypso_generator_models::models::GenerateProofResponse {
-            proof: encoded.to_vec(),
-        },
-    );
+    return HttpResponse::Ok().json(kalypso_generator_models::models::GenerateProofResponse {
+        proof: encoded.to_vec(),
+    });
 }
 
 // Routes
 pub fn routes(conf: &mut web::ServiceConfig) {
-    let scope = web::scope("/api")
-        .service(test)
-        .service(generate_proof);
+    let scope = web::scope("/api").service(test).service(generate_proof);
     conf.service(scope);
 }

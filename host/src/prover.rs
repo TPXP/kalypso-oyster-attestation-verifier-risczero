@@ -30,28 +30,31 @@ async fn main() -> std::io::Result<()> {
     let mut handles = vec![];
 
     let handle_1 = tokio::spawn(async move {
-
         let start_block: u64 = start_block.parse().expect("Can not parse start_block");
         let chain_id: u64 = chain_id.parse().expect("Can not parse chain _id");
         let max_parallel_proofs: usize = max_parallel_proofs.parse().unwrap_or_else(|_| 1);
-        log::info!("Start Block: {}, Max Parallel Requests: {}", start_block.clone(), max_parallel_proofs.clone());
+        log::info!(
+            "Start Block: {}, Max Parallel Requests: {}",
+            start_block.clone(),
+            max_parallel_proofs.clone()
+        );
 
         let listener =
-        kalypso_listener::job_creator::JobCreator::simple_listener_for_non_confidential_prover(
-            generator,
-            market_id.into(),
-            http_rpc_url.into(),
-            gas_key,
-            proof_market_place.into(),
-            generator_registry.into(),
-            start_block,
-            chain_id,
-            prover_url,
-            ivs_url,
-            false,
-            max_parallel_proofs,
-            false
-        );
+            kalypso_listener::job_creator::JobCreator::simple_listener_for_non_confidential_prover(
+                generator,
+                market_id.into(),
+                http_rpc_url.into(),
+                gas_key,
+                proof_market_place.into(),
+                generator_registry.into(),
+                start_block,
+                chain_id,
+                prover_url,
+                ivs_url,
+                false,
+                max_parallel_proofs,
+                false,
+            );
 
         listener.run().await
     });
