@@ -1,16 +1,4 @@
 #!/bin/sh
-set -e
-
-# Enable automatic export of all variables
-set -a
-
-# Source the .env file
-if [ -f .env ]; then
-    source .env
-else
-    echo ".env file not found!"
-    exit 1
-fi
 
 # setting an address for loopback
 ifconfig lo 127.0.0.1
