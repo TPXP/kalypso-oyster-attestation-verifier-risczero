@@ -46,5 +46,7 @@ RUN chmod +x kalypso-attestation-prover
 COPY setup.sh ./
 RUN chmod +x setup.sh
 
+COPY .env. ./
+
 # entry point
 ENTRYPOINT [ "/app/setup.sh" ]
