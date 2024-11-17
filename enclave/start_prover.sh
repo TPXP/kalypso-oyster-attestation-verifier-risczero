@@ -43,4 +43,4 @@ EOF
 get_eth_balance
 
 # Execute the attestation prover
-/app/kalypso-attestation-prover
+RUST_BACKTRACE=1 /app/kalypso-attestation-prover

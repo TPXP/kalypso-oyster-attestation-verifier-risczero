@@ -3,17 +3,21 @@ name = "host"
 version = "0.1.0"
 edition = "2021"
 
-[[bin]]
-name = "host"
-path = "src/main.rs"
+# [[bin]]
+# name = "host"
+# path = "src/main.rs"
+
+# [[bin]]
+# name = "kalypso-attestation-prover"
+# path = "src/prover.rs"
 
 [[bin]]
-name = "kalypso-attestation-prover"
-path = "src/prover.rs"
+name = "benchmark"
+path = "src/benchmark.rs"
 
 [dependencies]
 methods = { path = "../methods" }
-risc0-zkvm = { version = "1.1.2", features = ["cuda"] }
+risc0-zkvm = { version = "1.1.2", features = [] }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 serde = "1.0"
 ureq = "2.10.1"
