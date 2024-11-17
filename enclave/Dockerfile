@@ -1,9 +1,18 @@
-# base image
-FROM alpine:3.17
+# Use the official Ubuntu 24.04 as the base image
+FROM ubuntu:24.04
 
-# install dependency tools
-RUN apk add --no-cache net-tools iptables iproute2 wget
+# Set environment variables to non-interactive to avoid prompts during installation
+ENV DEBIAN_FRONTEND=noninteractive
 
+# Install dependency tools
+RUN apt-get update && \
+    apt-get install -y \
+        net-tools \
+        iptables \
+        iproute2 \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+    
 # working directory
 WORKDIR /app
 
