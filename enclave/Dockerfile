@@ -54,7 +54,7 @@ COPY setup.sh ./
 RUN chmod +x setup.sh
 
 COPY start_prover.sh ./
-RUN chmod +x start_prover
+RUN chmod +x start_prover.sh
 
 COPY .env ./
 
