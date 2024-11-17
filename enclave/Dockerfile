@@ -8,11 +8,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     iproute2 \
     wget \
     ca-certificates \
-    python3 \
-    supervisor \
     bash \
     curl \
-    netcat-openbsd \
     && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
