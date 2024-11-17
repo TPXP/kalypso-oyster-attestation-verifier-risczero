@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+sleep 5
+
 # Source the environment variables
 if [ -f /app/.env ]; then
     export $(grep -v '^#' /app/.env | xargs)
