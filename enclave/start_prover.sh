@@ -27,14 +27,16 @@ get_eth_balance() {
 EOF
 )
 
-    # Make the JSON-RPC request
-    RESPONSE=$(curl -s -X POST \
+    # Make the JSON-RPC request with a 10-second timeout
+    if RESPONSE=$(curl -s --max-time 10 -X POST \
         -H "Content-Type: application/json" \
         --data "$JSON_PAYLOAD" \
-        "$RPC_URL")
-
-    echo "ETH balance response:"
-    echo "$RESPONSE"
+        "$RPC_URL"); then
+        echo "ETH balance response:"
+        echo "$RESPONSE"
+    else
+        echo "Failed to retrieve ETH balance."
+    fi
 }
 
 # Get and display the ETH balance
