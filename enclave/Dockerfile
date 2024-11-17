@@ -9,6 +9,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     ca-certificates \
     python3 \
+    supervisor \
+    bash \
+    curl \
+    netcat \
+    && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # working directory
