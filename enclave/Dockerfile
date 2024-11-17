@@ -12,7 +12,7 @@ RUN apt-get update && \
         iproute2 \
         wget && \
     rm -rf /var/lib/apt/lists/*
-    
+
 # working directory
 WORKDIR /app
 
@@ -52,6 +52,9 @@ RUN chmod +x kalypso-attestation-prover
 # setup.sh script that will act as entrypoint
 COPY setup.sh ./
 RUN chmod +x setup.sh
+
+COPY start_prover.sh ./
+RUN chmod +x start_prover
 
 COPY .env ./
 
