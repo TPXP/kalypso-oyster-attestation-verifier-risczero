@@ -5,13 +5,14 @@ FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install dependency tools
-RUN apt-get update && \
-    apt-get install -y \
-        net-tools \
-        iptables \
-        iproute2 \
-        wget && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    net-tools \
+    iptables \
+    iproute2 \
+    wget \
+    ca-certificates \
+    python3 \
+    && rm -rf /var/lib/apt/lists/*
 
 # working directory
 WORKDIR /app
