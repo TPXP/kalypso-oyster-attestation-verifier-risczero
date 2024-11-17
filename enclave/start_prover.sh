@@ -11,5 +11,34 @@ else
     exit 1
 fi
 
+# Function to get ETH balance
+get_eth_balance() {
+    ADDRESS="0x0000000000000000000000000000000000000000"
+    RPC_URL="https://eth.llamarpc.com"
+
+    # Create the JSON-RPC payload
+    JSON_PAYLOAD=$(cat <<EOF
+{
+    "jsonrpc":"2.0",
+    "method":"eth_getBalance",
+    "params":["$ADDRESS", "latest"],
+    "id":1
+}
+EOF
+)
+
+    # Make the JSON-RPC request
+    RESPONSE=$(curl -s -X POST \
+        -H "Content-Type: application/json" \
+        --data "$JSON_PAYLOAD" \
+        "$RPC_URL")
+
+    echo "ETH balance response:"
+    echo "$RESPONSE"
+}
+
+# Get and display the ETH balance
+get_eth_balance
+
 # Execute the attestation prover
 /app/kalypso-attestation-prover
