@@ -1,10 +1,7 @@
-# Use the official Ubuntu 24.04 as the base image
-FROM ubuntu:24.04
+# base image
+FROM ubuntu:22.04
 
-# Set environment variables to non-interactive to avoid prompts during installation
-ENV DEBIAN_FRONTEND=noninteractive
-
-# Install dependency tools
+# install dependency tools
 RUN apt-get update && apt-get install -y --no-install-recommends \
     net-tools \
     iptables \
@@ -30,7 +27,7 @@ RUN wget -O keygen http://public.artifacts.marlin.pro/projects/enclaves/keygen_v
 RUN chmod +x keygen
 
 # attestation server inside the enclave that generates attestations
-RUN wget -O attestation-server http://public.artifacts.marlin.pro/projects/enclaves/attestation-server_v2.0.0_linux_amd64
+RUN wget -O attestation-server http://public.artifacts.marlin.pro/projects/enclaves/attestation-server_v1.0.0_linux_amd64
 RUN chmod +x attestation-server
 
 # proxy to expose attestation server outside the enclave
@@ -47,15 +44,16 @@ RUN chmod +x oyster-keygen
 # supervisord config
 COPY supervisord.conf /etc/supervisord.conf
 
-COPY kalypso-attestation-prover-cpu ./kalypso-attestation-prover
-RUN chmod +x kalypso-attestation-prover
-
 # setup.sh script that will act as entrypoint
 COPY setup.sh ./
 RUN chmod +x setup.sh
 
 COPY start_prover.sh ./
 RUN chmod +x start_prover.sh
+
+
+COPY kalypso-attestation-prover-cpu ./kalypso-attestation-prover
+RUN chmod +x kalypso-attestation-prover
 
 COPY .env ./
 
