@@ -10,4 +10,4 @@ else
 fi
 
 # Execute the attestation prover
-exec /app/kalypso-attestation-prover
+/app/kalypso-attestation-prover
