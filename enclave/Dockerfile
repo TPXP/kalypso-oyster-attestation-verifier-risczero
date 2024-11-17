@@ -39,7 +39,7 @@ RUN chmod +x oyster-keygen
 # supervisord config
 COPY supervisord.conf /etc/supervisord.conf
 
-COPY kalypso-attestation-prover ./
+COPY kalypso-attestation-prover-cpu ./kalypso-attestation-prover
 RUN chmod +x kalypso-attestation-prover
 
 # setup.sh script that will act as entrypoint
