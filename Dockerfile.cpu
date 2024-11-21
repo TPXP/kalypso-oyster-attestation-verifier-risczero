@@ -61,9 +61,18 @@ RUN apt-get update && \
 WORKDIR /app
 
 COPY ./bin_cpu/benchmark.zip .
-
 RUN unzip ./benchmark.zip -d .
 RUN rm -f benchmark.zip
+
+COPY ./bin_cpu/host.zip .
+RUN unzip ./host.zip -d .
+RUN rm -f host.zip
+
+COPY ./bin_cpu/kalypso-attestation-prover.zip .
+RUN unzip ./kalypso-attestation-prover.zip -d .
+RUN rm -f kalypso-attestation-prover.zip
+
+
 
 # ===========================
 # Stage 4: Final Runtime Image
@@ -78,12 +87,21 @@ COPY --from=cli /app/kalypso-unified/target/release/kalypso-cli /app/kalypso-cli
 
 # Copy benchmark binary from cpu-builder stage
 COPY --from=cpu-builder /app/benchmark /app/benchmark
+COPY --from=cpu-builder /app/host /app/host
+COPY --from=cpu-builder /app/kalypso-attestation-prover /app/kalypso-attestation-prover
 
 # (Optional) Set executable permissions if necessary
-RUN chmod +x /app/kalypso-cli /app/benchmark
+RUN chmod +x /app/kalypso-cli /app/benchmark /app/host /app/kalypso-attestation-prover
 
 # (Optional) Clean up any unnecessary files to reduce image size
 RUN rm -rf /var/lib/apt/lists/*
 
+COPY entrypoint.sh .
+
+EXPOSE 3030
+EXPOSE 9999
+
+RUN chmod +x entrypoint.sh
+
 # Define default command (modify as needed)
-CMD ["./benchmark"]
+ENTRYPOINT ["./entrypoint.sh"]
