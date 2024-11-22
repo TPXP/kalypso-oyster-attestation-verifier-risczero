@@ -17,6 +17,10 @@ usage() {
   echo "  benchmark         Run benchmark tests"
   echo "  test-connection   Test network connection"
   echo "  run-prover        Execute the prover service"
+  echo "  symbiotic-stake   Request Symbiotic Stake"
+  echo "  native-stake      Stake your own tokens"
+  echo "  claim-rewards     Claim Rewards"
+  echo "  discard-request   Discard Request"
   exit 1
 }
 
@@ -88,6 +92,50 @@ case "$OPERATION" in
     wait $PROVER_PID
     ;;
   
+  symbiotic-stake)
+    echo "Starting symbiotic stake request..."
+    export SYMBIOTIC_CHAIN_ID=17000
+    export VAULT_OPT_IN_SERVICE="0x95CC0a052ae33941877c9619835A233D21D57351"
+    export VAULT_ADDRESS="0x470696186e679b46632EF9702F077D6848bf1bd1"
+    export NETWORK_OPT_IN_SERVICE="0x58973d16FFA900D11fC22e5e2B6840d9f7e13401"
+    export NETWORK_ADDRESS="0xa2024540267e3366B1D3381285dd11A1B45928df"
+    
+    OPERATION_NAME="Request Symbiotic Stake" ./kalypso-cli &
+    SYM_PID=$!
+    # Wait for background processes to finish
+    wait $SYM_PID
+    ;;
+
+  native-stake)
+    echo "Native Staking"
+    export NATIVE_STAKING_ADDRESS="0xe9d2Bcc597f943ddA9EDf356DAC7C6A713dDE113"
+    export STAKING_TOKEN="0xB5570D4D39dD20F61dEf7C0d6846790360b89a18"
+
+    OPERATION_NAME="Native Stake" ./kalypso-cli &
+    NAT_PID=$!
+    # Wait for background processes to finish
+    wait $NAT_PID
+    ;;
+
+  claim-rewards)
+    echo "Claim Rewards"
+    export PAYMENT_TOKEN="0x8230d71d809718132C2054704F5E3aF1b86B669C"
+
+    OPERATION_NAME="Claim Rewards" ./kalypso-cli &
+    CLAIM_ID=$!
+    # Wait for background processes to finish
+    wait $CLAIM_ID
+    ;;
+
+  discard-request)
+    echo "Discard Request"
+
+    OPERATION_NAME="Discard Request" ./kalypso-cli &
+    D_ID=$!
+    # Wait for background processes to finish
+    wait $D_ID
+    ;;
+
   *)
     echo "Error: Invalid option '$OPERATION'."
     usage
