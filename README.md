@@ -70,7 +70,8 @@ project_name
 ```
 
 ## Kalypso Prover
-Provers can generate proofs or attestation requests on kalypso and earn rewards
+#### Note: _To manage regular operation of kalypso-cli it is recommended to install [kalypso-cli](#kalypso-cli-documentation)_
+Provers can generate proofs or attestation requests on kalypso and earn rewards.
 
 ```bash
 touch .env
@@ -80,10 +81,10 @@ touch .env
 ```
 GENERATOR_ADDRESS=<<generatorAddress>>
 GAS_KEY=<<gas key>>
-MARKET_ID=25
+MARKET_ID=3
 HTTP_RPC_URL=https://arb-sepolia.g.alchemy.com/v2/<<apikey>>
-PROOF_MARKETPLACE_ADDRESS=0x0b6340a893B944BDc3B4F012e934b724c83abF97
-GENERATOR_REGISTRY_ADDRESS=0x5ce3e1010028C4F5687356D721e3e2B6DcEA7C25
+PROOF_MARKETPLACE_ADDRESS="0xfa2AAcA897C4AB956625B72ac678b3CB5450a154"
+GENERATOR_REGISTRY_ADDRESS="0xdC33E074d2b055171e56887D79678136B4505Dec"
 START_BLOCK=92423485
 CHAIN_ID=421614
 MAX_PARALLEL_PROOFS=1
@@ -96,12 +97,89 @@ PROVER_URL=http://localhost:3030/api/generateProof
 cargo build --release
 ```
 
+#### Benchmark the prover
+This is should a proof for an attestation. It should take around 12-13 mins to generate the proof.
+```sh
+./target/release/benchmark
+```
+
 #### Run the prover
 The prover automatically detect the requests assigned to the your `generatorAddress` and submit proofs to kalypso and earns rewards.
 ```bash
 ./target/release/kalypso-attestation-prover
 ```
 
-## License
+### Kalypso CLI Documentation
 
+The `kalypso-cli` is an optional command-line interface (CLI) tool that provides an interactive way to perform various operations related to the Kalypso ecosystem. This guide explains how to build and run the `kalypso-cli` tool.
+
+---
+
+### Step 1: Download the Kalypso Monorepo
+
+Open a terminal and clone the `kalypso-unified` repository:
+
+```sh
+git clone https://github.com/marlinprotocol/kalypso-unified
+cd kalypso-unified
+git checkout symbotic-bindings
+```
+
+---
+
+### Step 2: Build the CLI Tool
+
+Ensure you are using a `stable` Rust toolchain to build the `kalypso-cli`. Run the following commands:
+
+```sh
+rm -rf .cargo
+cargo build --release --bin kalypso-cli
+```
+
+This command builds the CLI tool in release mode.
+
+---
+
+### Step 3: Run the CLI Tool
+
+Once the build is complete, you can run the `kalypso-cli` tool. It will prompt you to select an operation to perform. You can either input values interactively or use environment variables to predefine them.
+
+#### Example:
+
+```sh
+./target/release/kalypso-cli
+```
+
+When executed, the CLI will display a list of operations:
+
+```sh
+kalypso@kalypso:~/kalypso-unified$ ./target/release/kalypso-cli 
+? Select an operation ›
+❯ Add IVS Key
+  Benchmark Prover
+  Claim Rewards
+  Compute PCRs
+  Create Marketplace
+  Create Proof Request (confidential market)
+  Create Proof Request (non confidential market)
+  Discard Request
+  Join Marketplace
+  Leave Marketplace
+  Load Generator Config
+  Native Stake
+  Non-Confidential Market PCRS
+  Read Attestation
+  Read Proof Bytes
+  Register
+  Request Symbiotic Stake
+  Request To Leave Marketplace
+  Start Enclave Program
+  Stop Enclave Program
+  Test Enclave Connection
+  Update Encryption Key
+  Whitelist IVS Image
+  Whitelist Prover Image
+```
+
+## License
 This repository is licensed under the GNU AGPLv3 or any later version. See [LICENSE.txt](./LICENSE.txt).
