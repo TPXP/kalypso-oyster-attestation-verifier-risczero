@@ -50,18 +50,24 @@ OPERATION="$1"
 # Execute based on the selected operation
 case "$OPERATION" in
   register-join)
+    # Because this is multistep doing this.
+    set +e
+
     export DECLARED_COMPUTE=10
     export COMPUTE_PER_REQUEST=10
     export PROPOSED_TIME=10
     
     echo "Starting registration and joining process..."
-    # Add your registration and join commands below
-    OPERATION_NAME="Register" ./kalypso-cli &
-    REGISTER_PID=$!
-    OPERATION_NAME="Join Marketplace" ./kalypso-cli &
-    JOIN_PID=$!
-    # Wait for background processes to finish
-    wait $REGISTER_PID $JOIN_PID
+    
+    # Run the first operation
+    OPERATION_NAME="Register" ./kalypso-cli
+    REGISTER_STATUS=$?
+    echo "Registration process completed with exit status $REGISTER_STATUS"
+    
+    # Run the second operation regardless of the first one's result
+    OPERATION_NAME="Join Marketplace" ./kalypso-cli
+    JOIN_STATUS=$?
+    echo "Join Marketplace process completed with exit status $JOIN_STATUS"
     ;;
   
   benchmark)
