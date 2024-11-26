@@ -42,7 +42,7 @@ clean_build_artifacts() {
     fi
 
     # Remove application-specific binaries
-    BINARY_HOST="./host"
+    BINARY_HOST="./test-connection"
     BINARY_BENCHMARK="./benchmark"
     BINARY_PROVER="./kalypso-attestation-prover"
 
@@ -297,12 +297,12 @@ install_kalypso_cli() {
 
 # Function to check and build application-specific binaries
 build_application_binaries() {
-    BINARY_HOST="./host"
+    BINARY_HOST="./test-connection"
     BINARY_BENCHMARK="./benchmark"
     BINARY_PROVER="./kalypso-attestation-prover"
 
     if [ -f "$BINARY_HOST" ] && [ -f "$BINARY_BENCHMARK" ] && [ -f "$BINARY_PROVER" ]; then
-        echo "All application-specific binaries (host, benchmark, kalypso-attestation-prover) are already built."
+        echo "All application-specific binaries (test-connection, benchmark, kalypso-attestation-prover) are already built."
     else
         echo "One or more application-specific binaries are missing. Building them using Cargo..."
         if [ "$MODE" = "--gpu" ]; then
@@ -323,12 +323,12 @@ build_application_binaries() {
             echo "Copying application-specific binaries to the current directory..."
 
             # Copy the binaries to the cwd
-            cp "$BUILT_HOST" "."
+            cp "$BUILT_HOST" "./test-connection"
             cp "$BUILT_BENCHMARK" "./benchmark"
             cp "$BUILT_PROVER" "./kalypso-attestation-prover"
 
             # Ensure the copied binaries are executable
-            chmod +x "./host" "./benchmark" "./kalypso-attestation-prover"
+            chmod +x "./test-connection" "./benchmark" "./kalypso-attestation-prover"
 
             echo "Copied application-specific binaries to the current directory successfully."
         else

@@ -7,7 +7,7 @@ check_all_binaries_exist() {
     echo "Verifying the presence of required binaries..."
 
     # Define the list of required binaries
-    REQUIRED_BINARIES=("host" "benchmark" "kalypso-attestation-prover" "kalypso-cli")
+    REQUIRED_BINARIES=("test-connection" "benchmark" "kalypso-attestation-prover" "kalypso-cli")
 
     # Initialize an array to hold any missing binaries
     MISSING_BINARIES=()
@@ -119,7 +119,7 @@ case "$OPERATION" in
   test-connection)
     echo "Testing network connection..."
     # Add your connection test commands below
-    ./host --url http://3.110.146.109:1500/attestation/raw &
+    ./test-connection --url http://3.110.146.109:1500/attestation/raw &
     HOST_PID=$!
     wait $HOST_PID
     ;;
