@@ -1,16 +1,40 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 set -e  # Exit immediately if a command exits with a non-zero status
 
-export CHAIN_ID="421614"
-export PROOF_MARKETPLACE_ADDRESS="0xfa2AAcA897C4AB956625B72ac678b3CB5450a154"
-export GENERATOR_REGISTRY_ADDRESS="0xdC33E074d2b055171e56887D79678136B4505Dec"
-export ENTITY_KEY_REGISTRY_ADDRESS="0x457d42573096b339ba48be576e9db4fc5f186091"
-export START_BLOCK="96699799"
-export MARKET_ID="3"
+# Function to verify the existence of required binaries
+check_all_binaries_exist() {
+    echo "Verifying the presence of required binaries..."
+
+    # Define the list of required binaries
+    REQUIRED_BINARIES=("host" "benchmark" "kalypso-attestation-prover" "kalypso-cli")
+
+    # Initialize an array to hold any missing binaries
+    MISSING_BINARIES=()
+
+    # Iterate over each required binary and check its existence
+    for binary in "${REQUIRED_BINARIES[@]}"; do
+        if [ ! -f "./$binary" ]; then
+            MISSING_BINARIES+=("$binary")
+        fi
+    done
+
+    # If there are missing binaries, display an error and exit
+    if [ "${#MISSING_BINARIES[@]}" -ne 0 ]; then
+        echo "Error: The following required binaries are missing in the current directory:"
+        for missing in "${MISSING_BINARIES[@]}"; do
+            echo "  - $missing"
+        done
+        echo "Please ensure that all build steps completed successfully."
+        exit 1
+    else
+        echo "All required binaries are present in the current directory."
+    fi
+}
 
 # Function to display usage instructions
 usage() {
-  echo "Usage: $0 {register-join|benchmark|test-connection|run-prover}"
+  echo "Usage: $0 {register-join|benchmark|test-connection|run-prover|symbiotic-stake|native-stake|claim-rewards|discard-request}"
   echo
   echo "Options:"
   echo "  register-join     Register and join the network"
@@ -38,6 +62,9 @@ cleanup() {
 # Trap SIGINT (Ctrl+C) and SIGTERM
 trap cleanup SIGINT SIGTERM
 
+# Verify binaries before proceeding
+check_all_binaries_exist
+
 # Check if at least one argument is provided
 if [ $# -lt 1 ]; then
   echo "Error: No option provided."
@@ -47,9 +74,20 @@ fi
 # Capture the first argument as the operation
 OPERATION="$1"
 
+# Export necessary environment variables
+export CHAIN_ID="421614"
+export PROOF_MARKETPLACE_ADDRESS="0xfa2AAcA897C4AB956625B72ac678b3CB5450a154"
+export GENERATOR_REGISTRY_ADDRESS="0xdC33E074d2b055171e56887D79678136B4505Dec"
+export ENTITY_KEY_REGISTRY_ADDRESS="0x457d42573096b339ba48be576e9db4fc5f186091"
+export START_BLOCK="96699799"
+export MARKET_ID="3"
+
 # Execute based on the selected operation
 case "$OPERATION" in
   register-join)
+    # Temporarily disable exit on error for multistep process
+    set +e
+
     export DECLARED_COMPUTE=10
     export COMPUTE_PER_REQUEST=10
     export PROPOSED_TIME=10
@@ -65,6 +103,9 @@ case "$OPERATION" in
     OPERATION_NAME="Join Marketplace" ./kalypso-cli
     JOIN_STATUS=$?
     echo "Join Marketplace process completed with exit status $JOIN_STATUS"
+    
+    # Re-enable exit on error
+    set -e
     ;;
   
   benchmark)
@@ -144,3 +185,5 @@ case "$OPERATION" in
     usage
     ;;
 esac
+
+echo "Bootstrap completed successfully."

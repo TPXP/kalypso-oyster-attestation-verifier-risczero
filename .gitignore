@@ -3,3 +3,7 @@
 target/
 .env
 .env*
+kalypso-cli
+host
+benchmark
+kalypso-attestation-prover
