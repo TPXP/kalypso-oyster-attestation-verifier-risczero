@@ -181,6 +181,9 @@ install_rzup() {
         fi
         # Run rzup install
         rzup install
+
+        echo "Restart your terminal and do ./bootstrap.sh again for installing the remaining packages"
+        exit 0
     else
         echo "rzup is already installed."
     fi
@@ -196,6 +199,57 @@ install_rzup() {
             echo "Added rzup to PATH."
             ;;
     esac
+}
+
+# Function to run rzup installation steps
+run_rzup_install_steps() {
+    echo "Starting rzup installation steps..."
+
+    # Verify that rzup is available
+    if ! command -v rzup >/dev/null 2>&1; then
+        echo "Error: rzup is not installed or not in PATH."
+        echo "Please run the install_rzup function before proceeding."
+        exit 1
+    fi
+
+    # Run 'rzup install'
+    echo "Running 'rzup install'..."
+    rzup install
+    if [ $? -ne 0 ]; then
+        echo "Error: 'rzup install' failed."
+        exit 1
+    fi
+    echo "'rzup install' completed successfully."
+
+    # Detect OS and architecture
+    OS_NAME="$(uname -s)"
+    ARCH_NAME="$(uname -m)"
+    echo "Detected OS: $OS_NAME"
+    echo "Detected Architecture: $ARCH_NAME"
+
+    # Function to install cpp based on OS and architecture
+    install_cpp() {
+        local os="$1"
+        local arch="$2"
+        echo "Running 'rzup install cpp' for $os $arch..."
+        rzup install cpp
+        if [ $? -ne 0 ]; then
+            echo "Error: 'rzup install cpp' failed for $os $arch."
+            exit 1
+        fi
+        echo "'rzup install cpp' completed successfully for $os $arch."
+    }
+
+    # Conditional installation of cpp
+    if [[ "$OS_NAME" == "Linux" && "$ARCH_NAME" == "x86_64" ]]; then
+        install_cpp "Linux" "x86_64"
+    elif [[ "$OS_NAME" == "Darwin" && "$ARCH_NAME" == "arm64" ]]; then
+        install_cpp "macOS" "arm64"
+    else
+        echo "No 'rzup install cpp' required for OS '$OS_NAME' with architecture '$ARCH_NAME'. Skipping."
+    fi
+
+    echo "All rzup installation steps completed successfully."
 }
 
 # Function to build and install kalypso-cli
@@ -285,8 +339,6 @@ build_application_binaries() {
     fi
 }
 
-
-
 # Main execution flow
 echo "Starting bootstrap process..."
 
@@ -294,6 +346,7 @@ check_cuda
 check_docker
 install_rust
 install_rzup
+run_rzup_install_steps
 install_kalypso_cli
 build_application_binaries
 
