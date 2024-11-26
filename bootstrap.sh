@@ -339,11 +339,40 @@ build_application_binaries() {
     fi
 }
 
+# Function to check if Docker is installed and running
+check_docker_running() {
+    echo "Checking Docker installation and status..."
+
+    # Check if Docker is installed
+    if ! command -v docker >/dev/null 2>&1; then
+        echo "Error: Docker is not installed on this system."
+        echo "Please install Docker before proceeding."
+        echo "Visit https://docs.docker.com/get-docker/ for installation instructions."
+        exit 1
+    else
+        echo "Docker is installed."
+    fi
+
+    # Check if Docker daemon is running
+    if ! docker info >/dev/null 2>&1; then
+        echo "Error: Docker daemon is not running."
+        echo "Please start Docker and ensure it is running correctly."
+        echo "On Linux, you can start Docker using:"
+        echo "    sudo systemctl start docker"
+        echo "On macOS, launch Docker Desktop from the Applications folder."
+        exit 1
+    else
+        echo "Docker daemon is running."
+    fi
+}
+
+
 # Main execution flow
 echo "Starting bootstrap process..."
 
 check_cuda
 check_docker
+check_docker_running
 install_rust
 install_rzup
 run_rzup_install_steps
