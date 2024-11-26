@@ -323,7 +323,7 @@ build_application_binaries() {
             echo "Copying application-specific binaries to the current directory..."
 
             # Copy the binaries to the cwd
-            cp "$BUILT_HOST" "./host"
+            cp "$BUILT_HOST" "."
             cp "$BUILT_BENCHMARK" "./benchmark"
             cp "$BUILT_PROVER" "./kalypso-attestation-prover"
 
