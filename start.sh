@@ -37,14 +37,15 @@ usage() {
   echo "Usage: $0 {register-join|benchmark|test-connection|run-prover|symbiotic-stake|native-stake|claim-rewards|discard-request}"
   echo
   echo "Options:"
-  echo "  register-join     Register and join the network"
-  echo "  benchmark         Run benchmark tests"
-  echo "  test-connection   Test network connection"
-  echo "  run-prover        Execute the prover service"
-  echo "  symbiotic-stake   Request Symbiotic Stake"
-  echo "  native-stake      Stake your own tokens"
-  echo "  claim-rewards     Claim Rewards"
-  echo "  discard-request   Discard Request"
+  echo "  register-join        Register and join the network"
+  echo "  benchmark            Run benchmark tests"
+  echo "  test-connection      Test network connection"
+  echo "  run-prover           Execute the prover service"
+  echo "  symbiotic-register   Register Operator with symbiotic"
+  echo "  symbiotic-stake      Request Symbiotic Stake"
+  echo "  native-stake         Stake your own tokens"
+  echo "  claim-rewards        Claim Rewards"
+  echo "  discard-request      Discard Request"
   exit 1
 }
 
@@ -180,7 +181,20 @@ case "$OPERATION" in
     wait $D_ID
     ;;
 
+  symbiotic-register)
+    echo "Register Operator with symbiotic"
+
+    export SYMBIOTIC_CHAIN_ID=17000
+    export SYMBIOTIC_OPERATOR_REGISTRY=0x6F75a4ffF97326A00e52662d82EA4FdE86a2C548
+
+    OPERATION_NAME="Symbiotic Operator Register" ./kalypso-cli &
+    S_ID=$!
+    # Wait for background processes to finish
+    wait $S_ID
+    ;;
+
   *)
+
     echo "Error: Invalid option '$OPERATION'."
     usage
     ;;
