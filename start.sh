@@ -34,18 +34,19 @@ check_all_binaries_exist() {
 
 # Function to display usage instructions
 usage() {
-  echo "Usage: $0 {register-join|benchmark|test-connection|run-prover|symbiotic-stake|native-stake|claim-rewards|discard-request}"
+  echo "Usage: $0 {register-join|benchmark|test-connection|run-prover|symbiotic-stake|native-stake|claim-rewards|discard-request|read-stake|symbiotic-register}"
   echo
   echo "Options:"
-  echo "  register-join        Register and join the network"
   echo "  benchmark            Run benchmark tests"
-  echo "  test-connection      Test network connection"
+  echo "  claim-rewards        Claim Rewards"
+  echo "  discard-request      Discard Request"
+  echo "  native-stake         Stake your own tokens"
+  echo "  read-stake           Read Stake data"
+  echo "  register-join        Register and join the network"
   echo "  run-prover           Execute the prover service"
   echo "  symbiotic-register   Register Operator with symbiotic"
   echo "  symbiotic-stake      Request Symbiotic Stake"
-  echo "  native-stake         Stake your own tokens"
-  echo "  claim-rewards        Claim Rewards"
-  echo "  discard-request      Discard Request"
+  echo "  test-connection      Test network connection"
   exit 1
 }
 
@@ -186,6 +187,16 @@ case "$OPERATION" in
     export SYMBIOTIC_OPERATOR_REGISTRY=0x6F75a4ffF97326A00e52662d82EA4FdE86a2C548
 
     OPERATION_NAME="Symbiotic Operator Register" ./kalypso-cli &
+    S_ID=$!
+    # Wait for background processes to finish
+    wait $S_ID
+    ;;
+
+  read-stake)
+    echo "Read Operator Stake data"
+    export INDEXER_URL="https://kalypso-symbiotic-indexer.justfortesting.me"
+
+    OPERATION_NAME="Read Stake Data" ./kalypso-cli &
     S_ID=$!
     # Wait for background processes to finish
     wait $S_ID
