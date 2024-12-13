@@ -202,7 +202,17 @@ case "$OPERATION" in
     wait $S_ID
     ;;
 
+    set-commission)
+    echo "Set Operator Commission"
+
+    OPERATION_NAME="Set Operator Reward Commission" ./kalypso-cli &
+    S_ID=$!
+    # Wait for background processes to finish
+    wait $S_ID
+    ;;
+
   *)
+  
 
     echo "Error: Invalid option '$OPERATION'."
     usage
