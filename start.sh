@@ -37,16 +37,22 @@ usage() {
   echo "Usage: $0 {register-join|benchmark|test-connection|run-prover|symbiotic-stake|native-stake|claim-rewards|discard-request|read-stake|symbiotic-register}"
   echo
   echo "Options:"
-  echo "  benchmark            Run benchmark tests"
-  echo "  claim-rewards        Claim Rewards"
-  echo "  discard-request      Discard Request"
-  echo "  native-stake         Stake your own tokens"
-  echo "  read-stake           Read Stake data"
-  echo "  register-join        Register and join the network"
-  echo "  run-prover           Execute the prover service"
-  echo "  symbiotic-register   Register Operator with symbiotic"
-  echo "  symbiotic-stake      Request Symbiotic Stake"
-  echo "  test-connection      Test network connection"
+  echo "  benchmark                      Run benchmark tests"
+  echo "  claim-rewards                  Claim Rewards"
+  echo "  discard-request                Discard Request"
+  echo "  native-stake                   Stake your own tokens"
+  echo "  read-stake                     Read Stake data"
+  echo "  register-join                  Register and join the network"
+  echo "  run-prover                     Execute the prover service"
+  echo "  symbiotic-register             Register Operator with symbiotic"
+  echo "  symbiotic-stake                Request Symbiotic Stake"
+  echo "  test-connection                Test network connection"
+  echo "  set-commission                 Set Operator commission"
+  echo "  set-operator-meta              Set Operator data"
+  echo "  request-stake-withdrawal       Request Stake Withdrawal"
+  echo "  read-pending-withdrawals       Read Pending Withdrawals"
+  echo "  process-pending-withdrawals    Process Pending Withdrawals"
+  echo "  check-reward                   Check Available Rewards"
   exit 1
 }
 
@@ -83,6 +89,7 @@ export GENERATOR_REGISTRY_ADDRESS="0xdC33E074d2b055171e56887D79678136B4505Dec"
 export ENTITY_KEY_REGISTRY_ADDRESS="0x457d42573096b339ba48be576e9db4fc5f186091"
 export START_BLOCK="106483690"
 export MARKET_ID="3"
+export INDEXER_URL="https://kalypso-symbiotic-indexer.justfortesting.me"
 
 # Execute based on the selected operation
 case "$OPERATION" in
@@ -194,7 +201,6 @@ case "$OPERATION" in
 
   read-stake)
     echo "Read Operator Stake data"
-    export INDEXER_URL="https://kalypso-symbiotic-indexer.justfortesting.me"
 
     OPERATION_NAME="Read Stake Data" ./kalypso-cli &
     S_ID=$!
@@ -202,21 +208,76 @@ case "$OPERATION" in
     wait $S_ID
     ;;
 
-    set-commission)
-    echo "Set Operator Commission"
+  set-commission)
+  echo "Set Operator Commission"
 
-    OPERATION_NAME="Set Operator Reward Commission" ./kalypso-cli &
-    S_ID=$!
-    # Wait for background processes to finish
-    wait $S_ID
-    ;;
+  OPERATION_NAME="Set Operator Reward Commission" ./kalypso-cli &
+  S_ID=$!
+  # Wait for background processes to finish
+  wait $S_ID
+  ;;
+
+  set-operator-meta) 
+  echo "Update Operator Metadata"
+
+  GENERATOR_META_JSON="./generatormeta.json"
+
+  if [ ! -f "$GENERATOR_META_JSON" ]; then
+    echo "$GENERATOR_META_JSON NOT FOUND"
+    exit 1
+  else
+    echo "Updating Operator Metadata from $GENERATOR_META_JSON"
+  fi
+  
+  OPERATION_NAME="Update Generator Metadata" ./kalypso-cli &
+  S_ID=$!
+  # Wait for background processes to finish
+  wait $S_ID
+  ;;
+
+  request-stake-withdrawal)
+  echo "Request Stake Withdrawal"
+
+  OPERATION_NAME="Request Native Stake Withdrawal" ./kalypso-cli &
+  S_ID=$!
+  # Wait for background processes to finish
+  wait $S_ID
+  ;;
+  
+
+  read-pending-withdrawals)
+  echo "Read Pending Withdrawals"
+
+  OPERATION_NAME="Read Native Staking Pending Withdrawals" ./kalypso-cli &
+  S_ID=$!
+  # Wait for background processes to finish
+  wait $S_ID
+  ;;
+
+  process-pending-withdrawals)
+  echo "Process Pending Withdrawals (if any)"
+  
+  OPERATION_NAME="Process Withdrawal Requests" ./kalypso-cli &
+  S_ID=$!
+  # Wait for background processes to finish
+  wait $S_ID
+  ;;
+
+  check-reward)
+  echo "Check Available Rewards"
+  
+  OPERATION_NAME="Read Rewards Info" ./kalypso-cli &
+  S_ID=$!
+  # Wait for background processes to finish
+  wait $S_ID
+  ;;
 
   *)
   
-
-    echo "Error: Invalid option '$OPERATION'."
-    usage
-    ;;
+  echo "Error: Invalid option '$OPERATION'."
+  
+  usage
+  ;;
 esac
 
 echo "Bootstrap completed successfully."

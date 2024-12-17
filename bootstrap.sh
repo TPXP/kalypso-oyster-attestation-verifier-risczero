@@ -41,6 +41,14 @@ clean_build_artifacts() {
         echo "kalypso-cli binary does not exist. Skipping."
     fi
 
+    # Remove the Cargo.lock
+    if [ -f "./Cargo.lock" ]; then
+        echo "Removing Cargo.lock ..."
+        rm -f ./Cargo.lock
+    else
+        echo "kalypso-cli binary does not exist. Skipping."
+    fi
+
     # Remove application-specific binaries
     BINARY_HOST="./test-connection"
     BINARY_BENCHMARK="./benchmark"
@@ -300,6 +308,8 @@ build_application_binaries() {
     BINARY_HOST="./test-connection"
     BINARY_BENCHMARK="./benchmark"
     BINARY_PROVER="./kalypso-attestation-prover"
+
+    rm ./Cargo.lock
 
     if [ -f "$BINARY_HOST" ] && [ -f "$BINARY_BENCHMARK" ] && [ -f "$BINARY_PROVER" ]; then
         echo "All application-specific binaries (test-connection, benchmark, kalypso-attestation-prover) are already built."
