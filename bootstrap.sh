@@ -309,7 +309,18 @@ build_application_binaries() {
     BINARY_BENCHMARK="./benchmark"
     BINARY_PROVER="./kalypso-attestation-prover"
 
-    rm ./Cargo.lock
+    LOCK="./Cargo.lock"
+
+    if [ -f "$LOCK" ]; then
+        if rm "$LOCK"; then
+            printf "Successfully removed %s.\n" "$LOCK"
+        else
+            printf "Error: Failed to remove %s.\n" "$LOCK" >&2
+            exit 1
+        fi
+    else
+        printf "File %s not found.\n" "$LOCK"
+    fi
 
     if [ -f "$BINARY_HOST" ] && [ -f "$BINARY_BENCHMARK" ] && [ -f "$BINARY_PROVER" ]; then
         echo "All application-specific binaries (test-connection, benchmark, kalypso-attestation-prover) are already built."
