@@ -38,7 +38,7 @@ WORKDIR /app
 FROM base AS cli
 
 # Clone the specific branch of the repository
-RUN git clone --branch symbotic-bindings --single-branch https://github.com/marlinprotocol/kalypso-unified.git
+RUN git clone --branch beta --single-branch https://github.com/marlinprotocol/kalypso-unified.git
 
 # Set working directory to the cloned repository
 WORKDIR /app/kalypso-unified

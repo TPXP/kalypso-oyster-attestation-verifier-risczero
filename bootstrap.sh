@@ -273,8 +273,8 @@ install_kalypso_cli() {
 
         cd "$TEMP_DIR"
 
-        echo "Checking out the symbotic-bindings branch..."
-        git checkout symbotic-bindings
+        echo "Checking out the beta branch..."
+        git checkout beta
 
         echo "Removing .cargo directory in kalypso-unified..."
         rm -rf .cargo
