@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e  # Exit immediately if a command exits with a non-zero status
+set -euo pipefail  # Exit on error, undefined variable, and error in pipelines
 
 # Function to verify the existence of required binaries
 check_all_binaries_exist() {
@@ -12,29 +12,29 @@ check_all_binaries_exist() {
     # Initialize an array to hold any missing binaries
     MISSING_BINARIES=()
 
-    # Iterate over each required binary and check its existence
+    # Iterate over each required binary and check its existence and executability
     for binary in "${REQUIRED_BINARIES[@]}"; do
-        if [ ! -f "./$binary" ]; then
+        if [ ! -x "./$binary" ]; then
             MISSING_BINARIES+=("$binary")
         fi
     done
 
     # If there are missing binaries, display an error and exit
     if [ "${#MISSING_BINARIES[@]}" -ne 0 ]; then
-        echo "Error: The following required binaries are missing in the current directory:"
+        echo "Error: The following required binaries are missing or not executable in the current directory:"
         for missing in "${MISSING_BINARIES[@]}"; do
             echo "  - $missing"
         done
-        echo "Please ensure that all build steps completed successfully."
+        echo "Please ensure that all build steps completed successfully and the binaries are executable."
         exit 1
     else
-        echo "All required binaries are present in the current directory."
+        echo "All required binaries are present and executable in the current directory."
     fi
 }
 
 # Function to display usage instructions
 usage() {
-  echo "Usage: $0 {register-join|benchmark|test-connection|run-prover|symbiotic-stake|native-stake|claim-rewards|discard-request|read-stake|symbiotic-register}"
+  echo "Usage: $0 {register-join|benchmark|test-connection|run-prover|symbiotic-stake|native-stake|claim-rewards|discard-request|read-stake|symbiotic-register|set-commission|set-operator-meta|request-stake-withdrawal|read-pending-withdrawals|process-pending-withdrawals|check-reward}"
   echo
   echo "Options:"
   echo "  benchmark                      Run benchmark tests"
@@ -84,12 +84,15 @@ OPERATION="$1"
 
 # Export necessary environment variables
 export CHAIN_ID="421614"
-export PROOF_MARKETPLACE_ADDRESS="0xfa2AAcA897C4AB956625B72ac678b3CB5450a154"
-export GENERATOR_REGISTRY_ADDRESS="0xdC33E074d2b055171e56887D79678136B4505Dec"
-export ENTITY_KEY_REGISTRY_ADDRESS="0x457d42573096b339ba48be576e9db4fc5f186091"
-export START_BLOCK="106483690"
-export MARKET_ID="3"
-export INDEXER_URL="https://kalypso-symbiotic-indexer.justfortesting.me"
+export PROOF_MARKETPLACE_ADDRESS="0xC05d689B341d84900f0d0CE36f35aDAbfB57F68d"
+export GENERATOR_REGISTRY_ADDRESS="0x4743a2c7a96C9FBED8b7eAD980aD01822F9711Db"
+export ENTITY_KEY_REGISTRY_ADDRESS="0x457D42573096b339bA48Be576e9Db4Fc5F186091"
+export START_BLOCK="113483690"
+export MARKET_ID="1"
+export INDEXER_URL="https://kalypso-beta.justfortesting.me"
+
+export STAKING_TOKEN="0xB5570D4D39dD20F61dEf7C0d6846790360b89a18"
+export PAYMENT_TOKEN="0x8230d71d809718132C2054704F5E3aF1b86B669C"
 
 # Execute based on the selected operation
 case "$OPERATION" in
@@ -97,9 +100,9 @@ case "$OPERATION" in
     # Temporarily disable exit on error for multistep process
     set +e
 
-    export DECLARED_COMPUTE=10
-    export COMPUTE_PER_REQUEST=10
-    export PROPOSED_TIME=10
+    export DECLARED_COMPUTE="10"
+    export COMPUTE_PER_REQUEST="10"
+    export PROPOSED_TIME="1000"
     
     echo "Starting registration and joining process..."
     
@@ -122,15 +125,15 @@ case "$OPERATION" in
     # Add your benchmark commands below
     RUST_BACKTRACE=1 ./benchmark &
     BENCHMARK_PID=$!
-    wait $BENCHMARK_PID
+    wait "$BENCHMARK_PID"
     ;;
   
   test-connection)
     echo "Testing network connection..."
     # Add your connection test commands below
-    ./test-connection --url http://3.110.146.109:1500/attestation/raw &
+    ./test-connection --url "http://3.110.146.109:1500/attestation/raw" &
     HOST_PID=$!
-    wait $HOST_PID
+    wait "$HOST_PID"
     ;;
   
   run-prover)
@@ -142,40 +145,38 @@ case "$OPERATION" in
     # Add your prover execution commands below
     ./kalypso-attestation-prover &
     PROVER_PID=$!
-    wait $PROVER_PID
+    wait "$PROVER_PID"
     ;;
   
   symbiotic-stake)
     echo "Starting symbiotic stake request..."
-    export SYMBIOTIC_CHAIN_ID=17000
+    export SYMBIOTIC_CHAIN_ID="17000"
     export VAULT_OPT_IN_SERVICE="0x95CC0a052ae33941877c9619835A233D21D57351"
     export NETWORK_OPT_IN_SERVICE="0x58973d16FFA900D11fC22e5e2B6840d9f7e13401"
     
     OPERATION_NAME="Request Symbiotic Stake" ./kalypso-cli &
     SYM_PID=$!
     # Wait for background processes to finish
-    wait $SYM_PID
+    wait "$SYM_PID"
     ;;
 
   native-stake)
     echo "Native Staking"
-    export NATIVE_STAKING_ADDRESS="0xe9d2Bcc597f943ddA9EDf356DAC7C6A713dDE113"
-    export STAKING_TOKEN="0xB5570D4D39dD20F61dEf7C0d6846790360b89a18"
+    export NATIVE_STAKING_ADDRESS="0x5F1666aEB646439157e139FF37637302168e6bb9"
 
     OPERATION_NAME="Native Stake" ./kalypso-cli &
     NAT_PID=$!
     # Wait for background processes to finish
-    wait $NAT_PID
+    wait "$NAT_PID"
     ;;
 
   claim-rewards)
     echo "Claim Rewards"
-    export PAYMENT_TOKEN="0x8230d71d809718132C2054704F5E3aF1b86B669C"
 
     OPERATION_NAME="Claim Rewards" ./kalypso-cli &
     CLAIM_ID=$!
     # Wait for background processes to finish
-    wait $CLAIM_ID
+    wait "$CLAIM_ID"
     ;;
 
   discard-request)
@@ -184,19 +185,19 @@ case "$OPERATION" in
     OPERATION_NAME="Discard Request" ./kalypso-cli &
     D_ID=$!
     # Wait for background processes to finish
-    wait $D_ID
+    wait "$D_ID"
     ;;
 
   symbiotic-register)
     echo "Register Operator with symbiotic"
 
-    export SYMBIOTIC_CHAIN_ID=17000
-    export SYMBIOTIC_OPERATOR_REGISTRY=0x6F75a4ffF97326A00e52662d82EA4FdE86a2C548
+    export SYMBIOTIC_CHAIN_ID="17000"
+    export SYMBIOTIC_OPERATOR_REGISTRY="0x6F75a4ffF97326A00e52662d82EA4FdE86a2C548"
 
     OPERATION_NAME="Symbiotic Operator Register" ./kalypso-cli &
     S_ID=$!
     # Wait for background processes to finish
-    wait $S_ID
+    wait "$S_ID"
     ;;
 
   read-stake)
@@ -205,79 +206,75 @@ case "$OPERATION" in
     OPERATION_NAME="Read Stake Data" ./kalypso-cli &
     S_ID=$!
     # Wait for background processes to finish
-    wait $S_ID
+    wait "$S_ID"
     ;;
 
   set-commission)
-  echo "Set Operator Commission"
+    echo "Set Operator Commission"
 
-  OPERATION_NAME="Set Operator Reward Commission" ./kalypso-cli &
-  S_ID=$!
-  # Wait for background processes to finish
-  wait $S_ID
-  ;;
+    OPERATION_NAME="Set Operator Reward Commission" ./kalypso-cli &
+    S_ID=$!
+    # Wait for background processes to finish
+    wait "$S_ID"
+    ;;
 
   set-operator-meta) 
-  echo "Update Operator Metadata"
+    echo "Update Operator Metadata"
 
-  GENERATOR_META_JSON="./generatormeta.json"
+    GENERATOR_META_JSON="./generatormeta.json"
 
-  if [ ! -f "$GENERATOR_META_JSON" ]; then
-    echo "$GENERATOR_META_JSON NOT FOUND"
-    exit 1
-  else
-    echo "Updating Operator Metadata from $GENERATOR_META_JSON"
-  fi
-  
-  OPERATION_NAME="Update Generator Metadata" ./kalypso-cli &
-  S_ID=$!
-  # Wait for background processes to finish
-  wait $S_ID
-  ;;
+    if [ ! -f "$GENERATOR_META_JSON" ]; then
+      echo "Error: $GENERATOR_META_JSON NOT FOUND"
+      exit 1
+    else
+      echo "Updating Operator Metadata from $GENERATOR_META_JSON"
+    fi
+    
+    OPERATION_NAME="Update Generator Metadata" ./kalypso-cli &
+    S_ID=$!
+    # Wait for background processes to finish
+    wait "$S_ID"
+    ;;
 
   request-stake-withdrawal)
-  echo "Request Stake Withdrawal"
+    echo "Request Stake Withdrawal"
 
-  OPERATION_NAME="Request Native Stake Withdrawal" ./kalypso-cli &
-  S_ID=$!
-  # Wait for background processes to finish
-  wait $S_ID
-  ;;
-  
+    OPERATION_NAME="Request Native Stake Withdrawal" ./kalypso-cli &
+    S_ID=$!
+    # Wait for background processes to finish
+    wait "$S_ID"
+    ;;
+    
 
   read-pending-withdrawals)
-  echo "Read Pending Withdrawals"
+    echo "Read Pending Withdrawals"
 
-  OPERATION_NAME="Read Native Staking Pending Withdrawals" ./kalypso-cli &
-  S_ID=$!
-  # Wait for background processes to finish
-  wait $S_ID
-  ;;
+    OPERATION_NAME="Read Native Staking Pending Withdrawals" ./kalypso-cli &
+    S_ID=$!
+    # Wait for background processes to finish
+    wait "$S_ID"
+    ;;
 
   process-pending-withdrawals)
-  echo "Process Pending Withdrawals (if any)"
-  
-  OPERATION_NAME="Process Withdrawal Requests" ./kalypso-cli &
-  S_ID=$!
-  # Wait for background processes to finish
-  wait $S_ID
-  ;;
+    echo "Process Pending Withdrawals (if any)"
+    
+    OPERATION_NAME="Process Withdrawal Requests" ./kalypso-cli &
+    S_ID=$!
+    # Wait for background processes to finish
+    wait "$S_ID"
+    ;;
 
   check-reward)
-  echo "Check Available Rewards"
-  
-  OPERATION_NAME="Read Rewards Info" ./kalypso-cli &
-  S_ID=$!
-  # Wait for background processes to finish
-  wait $S_ID
-  ;;
+    echo "Check Available Rewards"
+    
+    OPERATION_NAME="Read Rewards Info" ./kalypso-cli &
+    S_ID=$!
+    # Wait for background processes to finish
+    wait "$S_ID"
+    ;;
 
   *)
-  
-  echo "Error: Invalid option '$OPERATION'."
-  
-  usage
-  ;;
+    echo "Error: Invalid option '$OPERATION'."
+    usage
+    ;;
 esac
-
-echo "Bootstrap completed successfully."
