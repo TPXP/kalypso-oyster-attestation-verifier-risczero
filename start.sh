@@ -34,7 +34,7 @@ check_all_binaries_exist() {
 
 # Function to display usage instructions
 usage() {
-  echo "Usage: $0 {register-join|benchmark|test-connection|run-prover|symbiotic-stake|native-stake|claim-rewards|discard-request|read-stake|symbiotic-register|set-commission|set-operator-meta|request-stake-withdrawal|read-pending-withdrawals|process-pending-withdrawals|check-reward}"
+  echo "Usage: $0 {register-join|benchmark|test-connection|run-prover|symbiotic-stake|native-stake|claim-rewards|discard-request|read-stake|symbiotic-register|set-operator-meta|request-stake-withdrawal|read-pending-withdrawals|process-pending-withdrawals|check-reward}"
   echo
   echo "Options:"
   echo "  benchmark                      Run benchmark tests"
@@ -47,7 +47,6 @@ usage() {
   echo "  symbiotic-register             Register Operator with symbiotic"
   echo "  symbiotic-stake                Request Symbiotic Stake"
   echo "  test-connection                Test network connection"
-  echo "  set-commission                 Set Operator commission"
   echo "  set-operator-meta              Set Operator data"
   echo "  request-stake-withdrawal       Request Stake Withdrawal"
   echo "  read-pending-withdrawals       Read Pending Withdrawals"
@@ -204,15 +203,6 @@ case "$OPERATION" in
     echo "Read Operator Stake data"
 
     OPERATION_NAME="Read Stake Data" ./kalypso-cli &
-    S_ID=$!
-    # Wait for background processes to finish
-    wait "$S_ID"
-    ;;
-
-  set-commission)
-    echo "Set Operator Commission"
-
-    OPERATION_NAME="Set Operator Reward Commission" ./kalypso-cli &
     S_ID=$!
     # Wait for background processes to finish
     wait "$S_ID"
