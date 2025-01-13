@@ -84,12 +84,18 @@ detect_os() {
 
 # Function to install packages on Linux
 install_packages_linux() {
+    # Operators are expected to fix these.
+    set +e
     sudo apt-get update
     sudo apt-get install -y build-essential curl git
+    set -e
 }
 
 # Function to install packages on macOS
 install_packages_mac() {
+    # Operators are expected to fix these.
+    set +e
+
     # Check if Homebrew is installed
     if ! command -v brew >/dev/null 2>&1; then
         echo "Homebrew is not installed. Please install Homebrew from https://brew.sh/ and rerun the script."
@@ -104,6 +110,8 @@ install_packages_mac() {
         echo "Please follow the on-screen instructions to complete the installation."
         exit 0
     fi
+
+    set -e
 }
 
 # Function to check CUDA and install essential system dependencies
