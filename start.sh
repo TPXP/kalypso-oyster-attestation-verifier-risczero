@@ -34,18 +34,20 @@ check_all_binaries_exist() {
 
 # Function to display usage instructions
 usage() {
-  echo "Usage: $0 {register-join|benchmark|test-connection|run-prover|symbiotic-stake|native-stake|claim-rewards|discard-request|read-stake|symbiotic-register|set-operator-meta|request-stake-withdrawal|read-pending-withdrawals|process-pending-withdrawals|check-reward}"
+  echo "Usage: $0 {register-join|benchmark|test-connection|run-prover|symbiotic-stake|native-stake|claim-rewards|discard-request|read-stake|symbiotic-register|set-operator-meta|request-stake-withdrawal|read-pending-withdrawals|process-pending-withdrawals|check-reward|request-marketplace-exit}"
   echo
   echo "Options:"
   echo "  benchmark                      Run benchmark tests"
   echo "  check-reward                   Check Available Rewards"
   echo "  claim-rewards                  Claim Rewards"
   echo "  discard-request                Discard Request"
+  echo "  leave-marketplace              Exit Marketplace"
   echo "  native-stake                   Stake your own tokens"
   echo "  process-pending-withdrawals    Process Pending Withdrawals"
   echo "  read-pending-withdrawals       Read Pending Withdrawals"
   echo "  read-stake                     Read Stake data"
   echo "  register-join                  Register and join the network"
+  echo "  request-marketplace-exit       Request To Leave Marketplace"
   echo "  request-stake-withdrawal       Request Stake Withdrawal"
   echo "  run-prover                     Execute the prover service"
   echo "  set-operator-meta              Set Operator data"
@@ -115,6 +117,32 @@ case "$OPERATION" in
     JOIN_STATUS=$?
     echo "Join Marketplace process completed with exit status $JOIN_STATUS"
     
+    # Re-enable exit on error
+    set -e
+    ;;
+
+  request-marketplace-exit)
+    # Temporarily disable exit on error for multistep process
+    set +e
+    
+    # Run the first operation
+    OPERATION_NAME="Request To Leave Marketplace" ./kalypso-cli
+    STATUS=$?
+    echo "Request to leave marketplace with exit status $STATUS"
+
+    # Re-enable exit on error
+    set -e
+    ;;
+
+  leave-marketplace)
+    # Temporarily disable exit on error for multistep process
+    set +e
+    
+    # Run the first operation
+    OPERATION_NAME="Leave Marketplace" ./kalypso-cli
+    STATUS=$?
+    echo "Leave marketplace with exit status $STATUS"
+
     # Re-enable exit on error
     set -e
     ;;
