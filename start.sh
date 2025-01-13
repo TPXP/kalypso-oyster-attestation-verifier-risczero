@@ -103,7 +103,7 @@ case "$OPERATION" in
 
     export DECLARED_COMPUTE="10"
     export COMPUTE_PER_REQUEST="10"
-    export PROPOSED_TIME="1000"
+    export PROPOSED_TIME="10000"
     
     echo "Starting registration and joining process..."
     
