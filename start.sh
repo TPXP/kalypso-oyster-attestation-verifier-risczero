@@ -38,20 +38,20 @@ usage() {
   echo
   echo "Options:"
   echo "  benchmark                      Run benchmark tests"
+  echo "  check-reward                   Check Available Rewards"
   echo "  claim-rewards                  Claim Rewards"
   echo "  discard-request                Discard Request"
   echo "  native-stake                   Stake your own tokens"
+  echo "  process-pending-withdrawals    Process Pending Withdrawals"
+  echo "  read-pending-withdrawals       Read Pending Withdrawals"
   echo "  read-stake                     Read Stake data"
   echo "  register-join                  Register and join the network"
+  echo "  request-stake-withdrawal       Request Stake Withdrawal"
   echo "  run-prover                     Execute the prover service"
+  echo "  set-operator-meta              Set Operator data"
   echo "  symbiotic-register             Register Operator with symbiotic"
   echo "  symbiotic-stake                Request Symbiotic Stake"
   echo "  test-connection                Test network connection"
-  echo "  set-operator-meta              Set Operator data"
-  echo "  request-stake-withdrawal       Request Stake Withdrawal"
-  echo "  read-pending-withdrawals       Read Pending Withdrawals"
-  echo "  process-pending-withdrawals    Process Pending Withdrawals"
-  echo "  check-reward                   Check Available Rewards"
   exit 1
 }
 
