@@ -38,3 +38,4 @@ kalypso_generator_models = { git = "https://github.com/marlinprotocol/kalypso-un
 [features]
 default = []
 gpu = ["risc0-zkvm/cuda"]
+force_transactions = ["kalypso_listener/force_transactions"]
