@@ -50,7 +50,7 @@ fn main() {
     ];
     let encoded = ethers::abi::encode(&value);
 
-    println!("Proof: {}", hex::encode(encoded));
+    println!("Proof: {}", hex::encode(&encoded));
     println!("Inputs: {}", hex::encode(&attestation));
 
     let value = vec![
