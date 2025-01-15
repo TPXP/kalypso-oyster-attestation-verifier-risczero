@@ -51,4 +51,17 @@ fn main() {
     let encoded = ethers::abi::encode(&value);
 
     println!("Proof: {}", hex::encode(encoded));
+    println!("Inputs: {}", hex::encode(&attestation));
+
+    let value = vec![
+        ethers::abi::Token::Bytes(attestation.into()),
+        ethers::abi::Token::Bytes(encoded.into()),
+    ];
+
+    let inputs_and_proof = ethers::abi::encode(&value);
+
+    println!(
+        "InputsAndProofEncoded: 0x{}",
+        hex::encode(&inputs_and_proof)
+    );
 }

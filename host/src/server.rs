@@ -16,7 +16,7 @@ impl ProvingServer {
         HttpServer::new(move || App::new().configure(handler::routes))
             .client_request_timeout(Duration::new(0, 0))
             .bind(("localhost", self.port))
-            .unwrap_or_else(|_| panic!("Can not bind to {}", &self.port))
+            .unwrap_or_else(|e| panic!("Can not bind to {}. Error: {}", &self.port, e))
             .run()
             .await
             .unwrap();
