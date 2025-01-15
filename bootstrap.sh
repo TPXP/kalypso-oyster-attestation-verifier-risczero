@@ -84,8 +84,11 @@ detect_os() {
 
 # Function to install packages on Linux
 install_packages_linux() {
+    # Operators are expected to fix these.
+    set +e
     sudo apt-get update
     sudo apt-get install -y build-essential curl git
+    set -e
 }
 
 # Function to install packages on macOS
