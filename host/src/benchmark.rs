@@ -35,6 +35,12 @@ fn main() {
     // let seal = receipt.inner.groth16().unwrap().seal.clone();
 
     // prefix 50bd1769 bytes to seal, og seal wont work on contracts
+
+    println!(
+        "Seal without prefix: {}",
+        hex::encode(receipt.inner.groth16().unwrap().seal.clone())
+    );
+
     let seal_with_prefix: Vec<u8> = vec![0x50, 0xBD, 0x17, 0x69]
         .into_iter()
         .chain(receipt.inner.groth16().unwrap().seal.clone())
@@ -42,6 +48,8 @@ fn main() {
     let guest = GUEST_ID.map(u32::to_le_bytes);
     let image_id = guest.as_flattened();
     let journal = receipt.journal.bytes;
+
+    println!("Seal with prefix: {}", hex::encode(&seal_with_prefix));
 
     let value = vec![
         ethers::abi::Token::Bytes(seal_with_prefix),
