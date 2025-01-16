@@ -55,6 +55,7 @@ async fn main() -> std::io::Result<()> {
                 max_parallel_proofs,
                 false,
                 9999,
+                0
             );
 
         listener.run().await
