@@ -53,8 +53,13 @@ async fn generate_proof(
 
     // let seal = receipt.inner.groth16().unwrap().seal.clone();
 
-    // prefix 50bd1769 bytes to seal, og seal wont work on contracts
-    let seal_with_prefix: Vec<u8> = vec![0x50, 0xBD, 0x17, 0x69]
+
+    // possible seals
+    // 0x310fe598
+    // 0x50bd1769
+    // 0xc101b42b
+
+    let seal_with_prefix: Vec<u8> = vec![0xc1, 0x01, 0xb4, 0x2b]
         .into_iter()
         .chain(receipt.inner.groth16().unwrap().seal.clone())
         .collect();

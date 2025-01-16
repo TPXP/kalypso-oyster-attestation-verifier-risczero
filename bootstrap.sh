@@ -86,8 +86,8 @@ detect_os() {
 install_packages_linux() {
     # Operators are expected to fix these.
     set +e
-    sudo apt-get update
-    sudo apt-get install -y build-essential curl git
+    # sudo apt-get update
+    # sudo apt-get install -y build-essential curl git
     set -e
 }
 
@@ -96,20 +96,20 @@ install_packages_mac() {
     # Operators are expected to fix these.
     set +e
 
-    # Check if Homebrew is installed
-    if ! command -v brew >/dev/null 2>&1; then
-        echo "Homebrew is not installed. Please install Homebrew from https://brew.sh/ and rerun the script."
-        exit 1
-    fi
-    brew update
-    brew install curl git
-    # build-essential equivalent on macOS is Xcode Command Line Tools
-    if ! xcode-select -p >/dev/null 2>&1; then
-        echo "Xcode Command Line Tools not found. Installing..."
-        xcode-select --install
-        echo "Please follow the on-screen instructions to complete the installation."
-        exit 0
-    fi
+    # # Check if Homebrew is installed
+    # if ! command -v brew >/dev/null 2>&1; then
+    #     echo "Homebrew is not installed. Please install Homebrew from https://brew.sh/ and rerun the script."
+    #     exit 1
+    # fi
+    # brew update
+    # brew install curl git
+    # # build-essential equivalent on macOS is Xcode Command Line Tools
+    # if ! xcode-select -p >/dev/null 2>&1; then
+    #     echo "Xcode Command Line Tools not found. Installing..."
+    #     xcode-select --install
+    #     echo "Please follow the on-screen instructions to complete the installation."
+    #     exit 0
+    # fi
 
     set -e
 }
