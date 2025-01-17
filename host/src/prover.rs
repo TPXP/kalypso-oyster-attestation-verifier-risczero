@@ -26,6 +26,7 @@ async fn main() -> std::io::Result<()> {
     env_var!(max_parallel_proofs, "MAX_PARALLEL_PROOFS");
     env_var!(ivs_url, "IVS_URL");
     env_var!(prover_url, "PROVER_URL");
+    env_var!(polling_interval, "POLLING_INTERVAL");
 
     let mut handles = vec![];
 
@@ -55,7 +56,7 @@ async fn main() -> std::io::Result<()> {
                 max_parallel_proofs,
                 false,
                 9999,
-                1000
+                polling_interval.parse()?,
             );
 
         listener.run().await
