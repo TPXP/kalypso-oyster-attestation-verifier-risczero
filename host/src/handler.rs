@@ -59,8 +59,8 @@ async fn generate_proof(
     // 0x50bd1769
     // 0xc101b42b
 
-    // let seal_with_prefix: Vec<u8> = vec![0xc1, 0x01, 0xb4, 0x2b]
-    let seal_with_prefix: Vec<u8> = vec![0x31, 0x0f, 0xe5, 0x98]
+    let seal_with_prefix: Vec<u8> = vec![0xc1, 0x01, 0xb4, 0x2b]
+    // let seal_with_prefix: Vec<u8> = vec![0x31, 0x0f, 0xe5, 0x98]
         .into_iter()
         .chain(receipt.inner.groth16().unwrap().seal.clone())
         .collect();
