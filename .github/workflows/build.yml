@@ -10,6 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - name: Install CUDA libs
+      run: |
+        wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb
+        sudo dpkg -i cuda-keyring_1.1-1_all.deb
+        sudo apt-get update
+        sudo apt-get -y install nvidia-open cuda-toolkit-12-6
     - name: Build binaries
       run: |
         chmod +x *.sh
