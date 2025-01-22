@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-8cores
     steps:
     - uses: actions/checkout@v4
     - name: Install CUDA libs
@@ -21,7 +21,7 @@ jobs:
       run: |
         echo "PATH=/usr/local/cuda-12.6/bin:$PATH" >> "$GITHUB_ENV"
         echo "LD_LIBRARY_PATH=/usr/local/cuda-12.6/lib64:$LD_LIBRARY_PATH" >> "$GITHUB_ENV"
-    - name: RZUP post-install
+    - name: RZUP path fix
       # Will be installed by the bootstrap script, but it does not change the path --"
       run: |
         echo "PATH=$HOME/.risc0/bin:$PATH" >> "$GITHUB_ENV"
