@@ -30,6 +30,8 @@ jobs:
         chmod +x *.sh
         ./bootstrap.sh clean
         ./bootstrap.sh --gpu
+        . "$HOME/.bashrc"
+        ./bootstrap.sh --gpu
     - name: Send build artifacts
       uses: actions/upload-artifact@v4
       with:
