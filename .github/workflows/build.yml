@@ -53,6 +53,7 @@ jobs:
         path: |
           *.sh
   docker:
+    needs: binaries
     # From https://docs.github.com/en/packages/managing-github-packages-using-github-actions-workflows/publishing-and-installing-a-package-with-github-actions#publishing-a-package-using-an-action
     runs-on: ubuntu-24.04
     permissions:
