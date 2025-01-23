@@ -5,8 +5,12 @@ on:
     branches: [ "beta" ]
   workflow_dispatch:
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
-  build:
+  binaries:
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v4
@@ -15,7 +19,7 @@ jobs:
         wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb
         sudo dpkg -i cuda-keyring_1.1-1_all.deb
         sudo apt-get update
-        sudo apt-get -y install cuda-toolkit-12-2
+        sudo apt-get -y install cuda-toolkit-12-6
     - name: CUDA post-install
       # https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#environment-setup
       run: |
@@ -32,12 +36,62 @@ jobs:
         ./bootstrap.sh --gpu
         . "$HOME/.bashrc"
         ./bootstrap.sh --gpu
-    - name: Send build artifacts
+        ls -lah
+    - name: Send build artifacts - binaries
       uses: actions/upload-artifact@v4
       with:
-        name: kalypso
+        name: binaries
+        path: |
+          benchmark
+          host
+          kalypso-*
+          test-connection
+    - name: Send build artifacts - scripts
+      uses: actions/upload-artifact@v4
+      with:
+        name: scripts
         path: |
           *.sh
-          test-connection
-          benchmark
-          kalypso-*
+  docker:
+    # From https://docs.github.com/en/packages/managing-github-packages-using-github-actions-workflows/publishing-and-installing-a-package-with-github-actions#publishing-a-package-using-an-action
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Fetch binaries
+      uses: actions/download-artifact@v4
+      with:
+        name: binaries
+    - name: Log in to the Container registry
+      uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=sha
+    - name: Build and push Docker image
+      id: push
+      uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+      with:
+        context: .
+        push: true
+        file: ./Dockerfile.gpu
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+    - name: Generate artifact attestation
+      uses: actions/attest-build-provenance@v2
+      with:
+        subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        subject-digest: ${{ steps.push.outputs.digest }}
+        push-to-registry: true
