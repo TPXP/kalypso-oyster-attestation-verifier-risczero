@@ -8,7 +8,6 @@ ENV LD_LIBRARY_PATH=/usr/local/cuda/compat:$LD_LIBRARY_PATH
 
 # Copy built binaries
 COPY ./benchmark /app/
-COPY ./host /app/
 COPY ./kalypso-cli /app/
 COPY ./kalypso-attestation-prover /app/
 COPY ./test-connection /app/

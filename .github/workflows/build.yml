@@ -43,7 +43,6 @@ jobs:
         name: binaries
         path: |
           benchmark
-          host
           kalypso-*
           test-connection
     - name: Send build artifacts - scripts
