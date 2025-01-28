@@ -19,10 +19,10 @@ WORKDIR /app
 ENV LD_LIBRARY_PATH=/usr/local/cuda/compat:$LD_LIBRARY_PATH
 
 # Copy built binaries
-COPY ./benchmark /app/
-COPY ./kalypso-cli /app/
-COPY ./kalypso-attestation-prover /app/
-COPY ./test-connection /app/
+COPY --chmod=755 ./benchmark /app/
+COPY --chmod=755 ./kalypso-cli /app/
+COPY --chmod=755 ./kalypso-attestation-prover /app/
+COPY --chmod=755 ./test-connection /app/
 
 # Copy the scripts
 COPY ./*.sh /app/
